@@ -201,11 +201,14 @@ async function chargerProduitsVedette() {
       return;
     }
 
-    container.innerHTML = data.products.map(p => `
+    container.innerHTML = data.products.map(p => {
+      const icon = p.category === 'telephones' ? '📱' : p.category === 'ordinateurs' ? '💻' : p.category === 'tablettes' ? '📟' : '🎧';
+      const imageHTML = p.image_url
+        ? `<img src="${p.image_url}" alt="${p.name}" class="product-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="product-img-placeholder" style="display:none">${icon}</div>`
+        : `<div class="product-img-placeholder">${icon}</div>`;
+      return `
       <div class="product-card">
-        <div class="product-img-placeholder">
-          ${p.category === 'telephones' ? '📱' : p.category === 'ordinateurs' ? '💻' : p.category === 'tablettes' ? '📟' : '🎧'}
-        </div>
+        ${imageHTML}
         <div class="product-info">
           <div class="product-category">${p.category}</div>
           <div class="product-name">${p.name}</div>
@@ -219,8 +222,8 @@ async function chargerProduitsVedette() {
             <a href="produits.html?id=${p.id}" class="btn btn-secondary btn-sm">Voir</a>
           </div>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   } catch (err) {
     // Afficher des produits de démo si l'API n'est pas disponible
     container.innerHTML = `

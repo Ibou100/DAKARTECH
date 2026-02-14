@@ -155,11 +155,22 @@ function renderCarteProduct(p) {
     ? `<div class="product-stock-low">⚡ Plus que ${p.stock} en stock!</div>`
     : p.stock === 0 ? `<div class="product-stock-low" style="color:var(--rouge)">❌ Rupture de stock</div>` : '';
 
+  // Afficher vraie image si disponible, sinon emoji placeholder
+  const imageHTML = p.image_url
+    ? `<img
+        src="${p.image_url}"
+        alt="${p.name}"
+        class="product-img"
+        style="cursor:pointer"
+        onclick="window.location.href='produits.html?id=${p.id}'"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+       >
+       <div class="product-img-placeholder" style="display:none;cursor:pointer" onclick="window.location.href='produits.html?id=${p.id}'">${icon}</div>`
+    : `<div class="product-img-placeholder" style="cursor:pointer" onclick="window.location.href='produits.html?id=${p.id}'">${icon}</div>`;
+
   return `
     <div class="product-card">
-      <div class="product-img-placeholder" style="cursor:pointer" onclick="window.location.href='produits.html?id=${p.id}'">
-        ${icon}
-      </div>
+      ${imageHTML}
       <div class="product-info">
         <div class="product-category">${p.category}</div>
         <div class="product-name">${p.name}</div>
