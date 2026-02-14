@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commande confirmée - DAKARTECH</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<section class="section" style="padding-top:40px;padding-bottom:60px">
+  <div class="container" style="max-width:640px;margin:0 auto">
+    <div id="confirmation-content">
+      <div class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Chargement de votre confirmation…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer"></div>
+
+<script src="js/main.js"></script>
+<script>
+renderHeader('');
+renderFooter();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('confirmation-content');
+
+  // Récupérer les données de la dernière commande
+  const stored = localStorage.getItem('dakartech_last_order');
+  if (!stored) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:60px">
+        <div style="font-size:3rem;margin-bottom:16px">❓</div>
+        <h2>Aucune commande trouvée</h2>
+        <p style="color:var(--gray);margin:12px 0 24px">Votre commande n'a pas pu être chargée.</p>
+        <a href="index.html" class="btn btn-primary">Retour à l'accueil</a>
+      </div>`;
+    return;
+  }
+
+  const { order, payment_instructions } = JSON.parse(stored);
+  const isWave = payment_instructions?.type === 'wave';
+  const isOrange = payment_instructions?.type === 'orange';
+  const isMobile = isWave || isOrange;
+
+  // Générer les instructions
+  const stepsHTML = (payment_instructions?.steps || []).map((step, i) => `
+    <div class="instruction-step">
+      <div class="step-num">${i + 1}</div>
+      <div class="step-text">${step}</div>
+    </div>
+  `).join('');
+
+  const iconConfirmation = isMobile ? '📱' : '🚗';
+  const couleurHeader = isWave ? 'var(--wave-blue)' : isOrange ? 'var(--orange-money)' : 'var(--vert)';
+
+  container.innerHTML = `
+    <!-- HEADER SUCCÈS -->
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-size:5rem;margin-bottom:16px;animation:pulse 2s infinite">✅</div>
+      <h1 style="font-size:1.8rem;font-weight:800;color:var(--vert);margin-bottom:8px">
+        Commande confirmée!
+      </h1>
+      <p style="color:var(--gray);font-size:1.05rem">
+        ${isMobile ? 'Effectuez votre paiement pour finaliser la commande' : 'Notre livreur vous contactera très bientôt'}
+      </p>
+    </div>
+
+    <!-- NUMÉRO DE COMMANDE -->
+    <div style="background:var(--vert-light);border:2px dashed var(--vert);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:24px">
+      <div style="font-size:0.85rem;color:var(--gray);margin-bottom:4px">Numéro de commande</div>
+      <div style="font-size:2.5rem;font-weight:900;color:var(--vert);letter-spacing:2px">
+        #${order.id}
+      </div>
+      <div style="font-size:0.8rem;color:var(--gray);margin-top:4px">
+        Conservez ce numéro pour le suivi de votre commande
+      </div>
+    </div>
+
+    <!-- MONTANT -->
+    <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="color:var(--gray)">Sous-total</span>
+        <span style="font-weight:600">${order.subtotal_formatted}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <span style="color:var(--gray)">Livraison (${order.delivery_city})</span>
+        <span style="font-weight:600">${order.delivery_fees_formatted}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:12px;border-top:2px solid var(--vert)">
+        <span style="font-weight:800;font-size:1.1rem">Total à payer</span>
+        <span style="font-weight:900;font-size:1.4rem;color:var(--vert)">${order.total_formatted}</span>
+      </div>
+    </div>
+
+    <!-- INSTRUCTIONS PAIEMENT -->
+    ${isMobile ? `
+    <div style="background:${isWave ? '#E0F7FA' : '#FFF3E0'};border:2px solid ${couleurHeader};border-radius:var(--radius);padding:24px;margin-bottom:24px">
+      <h3 style="font-weight:700;font-size:1.05rem;margin-bottom:16px;color:${couleurHeader}">
+        ${iconConfirmation} ${payment_instructions.title}
+      </h3>
+      ${stepsHTML}
+      <div style="margin-top:16px;padding:10px;background:rgba(255,255,255,0.6);border-radius:var(--radius-sm);font-size:0.82rem;color:var(--gray);font-style:italic">
+        ℹ️ ${payment_instructions.note}
+      </div>
+    </div>
+
+    <!-- BOUTON WHATSAPP -->
+    <a href="${payment_instructions.whatsapp_link}" target="_blank"
+       class="btn btn-whatsapp btn-full btn-lg" style="margin-bottom:12px">
+      💬 Envoyer la preuve de paiement sur WhatsApp
+    </a>
+
+    ` : `
+    <!-- PAIEMENT LIVRAISON -->
+    <div style="background:var(--vert-light);border:2px solid var(--vert);border-radius:var(--radius);padding:24px;margin-bottom:24px">
+      <h3 style="font-weight:700;font-size:1.05rem;margin-bottom:16px;color:var(--vert)">
+        🚗 ${payment_instructions.title}
+      </h3>
+      ${stepsHTML}
+    </div>
+
+    <a href="${payment_instructions.whatsapp_link}" target="_blank"
+       class="btn btn-whatsapp btn-full btn-lg" style="margin-bottom:12px">
+      💬 Suivre ma commande sur WhatsApp
+    </a>
+    `}
+
+    <!-- INFOS LIVRAISON -->
+    <div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px">
+      <h4 style="font-weight:700;margin-bottom:12px">📦 Détails de livraison</h4>
+      <div style="display:grid;gap:8px;font-size:0.9rem">
+        <div><span style="color:var(--gray)">Client: </span><strong>${order.customer_name || 'Non renseigné'}</strong></div>
+        <div><span style="color:var(--gray)">Téléphone: </span><strong>${order.delivery_phone}</strong></div>
+        <div><span style="color:var(--gray)">Adresse: </span><strong>${order.delivery_address}</strong></div>
+        <div><span style="color:var(--gray)">Ville: </span><strong>${order.delivery_city}</strong></div>
+        ${order.delivery_notes ? `<div><span style="color:var(--gray)">Note: </span><em>${order.delivery_notes}</em></div>` : ''}
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <a href="produits.html" class="btn btn-secondary">
+        🛍️ Continuer les achats
+      </a>
+      <a href="index.html" class="btn btn-primary">
+        🏠 Accueil
+      </a>
+    </div>
+
+    <p style="text-align:center;font-size:0.85rem;color:var(--gray);margin-top:20px">
+      Une question? Contactez-nous: <a href="tel:+221701234567" style="color:var(--vert);font-weight:600">+221 70 123 45 67</a>
+    </p>
+  `;
+
+  // Nettoyer le localStorage après affichage
+  setTimeout(() => localStorage.removeItem('dakartech_last_order'), 60000);
+});
+</script>
+
+<style>
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+</style>
+</body>
+</html>

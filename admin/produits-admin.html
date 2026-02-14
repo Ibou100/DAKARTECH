@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produits - DAKARTECH Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="admin-sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">💻 DAKARTECH</div>
+    <div class="sub">Panneau d'administration</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <a class="nav-item" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="commandes.html"><span class="icon">📦</span> Commandes</a>
+    <a class="nav-item active" href="produits-admin.html"><span class="icon">🛍️</span> Produits</a>
+    <div class="nav-section">Accès rapide</div>
+    <a class="nav-item" href="../frontend/index.html" target="_blank"><span class="icon">🌐</span> Voir le site</a>
+  </nav>
+  <div class="sidebar-footer">DAKARTECH Admin v1.0</div>
+</aside>
+
+<!-- MODAL PRODUIT -->
+<div class="modal-overlay" id="modal-produit" style="display:none" onclick="fermerModalProduit()">
+  <div class="modal" style="max-width:560px" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modal-titre">Ajouter un produit</h3>
+      <button class="modal-close" onclick="fermerModalProduit()">✕</button>
+    </div>
+    <form id="form-produit">
+      <div class="form-group">
+        <label class="form-label">Nom du produit *</label>
+        <input type="text" id="p-nom" class="form-control" placeholder="Ex: Samsung Galaxy A54 5G" required>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Prix (FCFA) *</label>
+          <input type="number" id="p-prix" class="form-control" placeholder="0" required min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stock *</label>
+          <input type="number" id="p-stock" class="form-control" placeholder="0" value="0" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Catégorie *</label>
+        <select id="p-categorie" class="form-control" required>
+          <option value="">-- Choisir --</option>
+          <option value="telephones">📱 Téléphones</option>
+          <option value="ordinateurs">💻 Ordinateurs</option>
+          <option value="accessoires">🎧 Accessoires</option>
+          <option value="tablettes">📟 Tablettes</option>
+          <option value="montres">⌚ Montres</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="p-description" class="form-control" rows="3" placeholder="Description du produit…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL de l'image</label>
+        <input type="url" id="p-image" class="form-control" placeholder="https://…">
+        <div class="form-hint">Entrez l'URL d'une image hébergée en ligne (Unsplash, Cloudinary…)</div>
+        <div id="image-preview" style="margin-top:8px"></div>
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="p-actif" checked>
+          <span class="form-label" style="margin:0">Produit actif (visible sur le site)</span>
+        </label>
+      </div>
+    </form>
+    <div class="modal-footer">
+      <button onclick="fermerModalProduit()" class="btn btn-secondary">Annuler</button>
+      <button onclick="soumettreFormulaire()" class="btn btn-primary" id="btn-save">
+        💾 Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="admin-main">
+  <div class="admin-topbar">
+    <h1 class="topbar-title">🛍️ Gestion des Produits</h1>
+    <div class="topbar-right">
+      <span id="nb-produits" style="font-size:0.85rem;color:var(--gray)"></span>
+      <button onclick="ouvrirModalAjouter()" class="btn btn-primary">+ Ajouter un produit</button>
+    </div>
+  </div>
+
+  <div class="admin-content">
+
+    <!-- FILTRES -->
+    <div class="table-card" style="margin-bottom:16px;padding:16px">
+      <div class="filters-row">
+        <input type="text" id="recherche" class="search-input" placeholder="🔍 Rechercher…" oninput="filtrerProduits()">
+        <select class="filter-select" id="filtre-categorie" onchange="chargerProduits()">
+          <option value="">Toutes catégories</option>
+          <option value="telephones">📱 Téléphones</option>
+          <option value="ordinateurs">💻 Ordinateurs</option>
+          <option value="accessoires">🎧 Accessoires</option>
+          <option value="tablettes">📟 Tablettes</option>
+          <option value="montres">⌚ Montres</option>
+        </select>
+        <button onclick="chargerProduits()" class="btn btn-secondary btn-sm">🔄 Actualiser</button>
+      </div>
+    </div>
+
+    <!-- TABLEAU PRODUITS -->
+    <div class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Produit</th>
+              <th>Catégorie</th>
+              <th>Prix</th>
+              <th>Stock</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-produits">
+            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray)">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:center;gap:8px;margin-top:16px" id="pagination"></div>
+
+  </div>
+</main>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+let editingId = null;
+let currentPage = 1;
+
+const CAT_LABELS = { telephones: '📱 Téléphones', ordinateurs: '💻 Ordinateurs', accessoires: '🎧 Accessoires', tablettes: '📟 Tablettes', montres: '⌚ Montres' };
+
+function showToast(msg, type = 'success') {
+  const c = document.getElementById('toast-container');
+  const d = document.createElement('div');
+  d.className = `toast ${type}`;
+  d.textContent = (type === 'success' ? '✅ ' : '❌ ') + msg;
+  c.appendChild(d);
+  setTimeout(() => d.remove(), 3500);
+}
+
+async function chargerProduits() {
+  const cat = document.getElementById('filtre-categorie').value;
+  const search = document.getElementById('recherche').value;
+  const params = new URLSearchParams({ page: currentPage, per_page: 20 });
+  if (cat) params.set('category', cat);
+  if (search) params.set('search', search);
+
+  const tbody = document.getElementById('tbody-produits');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--gray)">Chargement…</td></tr>';
+
+  try {
+    const res = await fetch(`${API_BASE}/products?${params}`);
+    const data = await res.json();
+    document.getElementById('nb-produits').textContent = `${data.total} produit${data.total > 1 ? 's' : ''}`;
+
+    if (!data.products.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">🛍️</div><h3>Aucun produit</h3><p>Ajoutez votre premier produit!</p><button onclick="ouvrirModalAjouter()" class="btn btn-primary" style="margin-top:12px">+ Ajouter</button></div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.products.map(p => `
+      <tr>
+        <td style="font-size:0.85rem;color:var(--gray)">#${p.id}</td>
+        <td>
+          <div style="display:flex;gap:10px;align-items:center">
+            <div style="width:40px;height:40px;border-radius:8px;background:var(--vert-light);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">
+              ${p.category === 'telephones' ? '📱' : p.category === 'ordinateurs' ? '💻' : p.category === 'tablettes' ? '📟' : '🎧'}
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:0.9rem">${p.name}</div>
+              <div style="font-size:0.75rem;color:var(--gray)">${(p.description || '').substring(0, 50)}…</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge badge-wave">${CAT_LABELS[p.category] || p.category}</span></td>
+        <td><strong style="color:var(--vert)">${p.price_formatted}</strong></td>
+        <td>
+          <span style="font-weight:600;color:${p.stock === 0 ? 'var(--rouge)' : p.stock <= 5 ? 'var(--orange)' : 'var(--dark)'}">${p.stock}</span>
+          ${p.stock === 0 ? '<span style="font-size:0.75rem;color:var(--rouge);margin-left:4px">Rupture</span>' : ''}
+          ${p.stock > 0 && p.stock <= 5 ? '<span style="font-size:0.75rem;color:var(--orange);margin-left:4px">Faible</span>' : ''}
+        </td>
+        <td>
+          ${p.is_active
+            ? '<span class="badge badge-confirmed">✅ Actif</span>'
+            : '<span class="badge badge-cancelled">❌ Inactif</span>'}
+        </td>
+        <td>
+          <div style="display:flex;gap:4px">
+            <button onclick="ouvrirModalModifier(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="btn btn-sm btn-secondary" title="Modifier">✏️</button>
+            <button onclick="desactiverProduit(${p.id}, '${p.name}')" class="btn btn-sm btn-danger" title="Supprimer">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    // Pagination
+    const pagEl = document.getElementById('pagination');
+    pagEl.innerHTML = '';
+    if (data.pages > 1) {
+      for (let i = 1; i <= data.pages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-secondary'}`;
+        btn.textContent = i;
+        btn.onclick = () => { currentPage = i; chargerProduits(); };
+        pagEl.appendChild(btn);
+      }
+    }
+
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray)">❌ Erreur de connexion</td></tr>';
+  }
+}
+
+let filtreTimer;
+function filtrerProduits() { clearTimeout(filtreTimer); filtreTimer = setTimeout(chargerProduits, 350); }
+
+function ouvrirModalAjouter() {
+  editingId = null;
+  document.getElementById('modal-titre').textContent = '➕ Ajouter un produit';
+  document.getElementById('form-produit').reset();
+  document.getElementById('p-actif').checked = true;
+  document.getElementById('image-preview').innerHTML = '';
+  document.getElementById('modal-produit').style.display = 'flex';
+}
+
+function ouvrirModalModifier(produit) {
+  editingId = produit.id;
+  document.getElementById('modal-titre').textContent = `✏️ Modifier: ${produit.name}`;
+  document.getElementById('p-nom').value = produit.name;
+  document.getElementById('p-prix').value = produit.price;
+  document.getElementById('p-stock').value = produit.stock;
+  document.getElementById('p-categorie').value = produit.category;
+  document.getElementById('p-description').value = produit.description || '';
+  document.getElementById('p-image').value = produit.image_url || '';
+  document.getElementById('p-actif').checked = produit.is_active;
+  if (produit.image_url) previewImage(produit.image_url);
+  document.getElementById('modal-produit').style.display = 'flex';
+}
+
+function fermerModalProduit() {
+  document.getElementById('modal-produit').style.display = 'none';
+  editingId = null;
+}
+
+function previewImage(url) {
+  const el = document.getElementById('image-preview');
+  if (url) {
+    el.innerHTML = `<img src="${url}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-top:4px" onerror="this.style.display='none'">`;
+  } else el.innerHTML = '';
+}
+
+document.getElementById('p-image').addEventListener('input', (e) => previewImage(e.target.value));
+
+async function soumettreFormulaire() {
+  const btnSave = document.getElementById('btn-save');
+  const payload = {
+    name: document.getElementById('p-nom').value.trim(),
+    price: parseInt(document.getElementById('p-prix').value),
+    stock: parseInt(document.getElementById('p-stock').value),
+    category: document.getElementById('p-categorie').value,
+    description: document.getElementById('p-description').value.trim(),
+    image_url: document.getElementById('p-image').value.trim(),
+    is_active: document.getElementById('p-actif').checked
+  };
+
+  if (!payload.name || !payload.price || !payload.category) {
+    showToast('Remplissez tous les champs obligatoires', 'error');
+    return;
+  }
+
+  btnSave.disabled = true;
+  btnSave.innerHTML = '<div class="loading"></div> Enregistrement…';
+
+  try {
+    const url = editingId ? `${API_BASE}/products/${editingId}` : `${API_BASE}/products`;
+    const method = editingId ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(data.message || 'Produit enregistré!');
+      fermerModalProduit();
+      chargerProduits();
+    } else showToast(data.error, 'error');
+  } catch { showToast('Erreur de connexion', 'error'); }
+  finally { btnSave.disabled = false; btnSave.innerHTML = '💾 Enregistrer'; }
+}
+
+async function desactiverProduit(id, nom) {
+  if (!confirm(`Supprimer le produit "${nom}"? Il sera masqué du site.`)) return;
+  try {
+    const res = await fetch(`${API_BASE}/products/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) { showToast('Produit supprimé'); chargerProduits(); }
+    else showToast(data.error, 'error');
+  } catch { showToast('Erreur', 'error'); }
+}
+
+chargerProduits();
+</script>
+</body>
+</html>

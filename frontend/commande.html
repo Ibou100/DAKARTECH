@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passer la commande - DAKARTECH</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<!-- ÉTAPES -->
+<div style="background:var(--dark);padding:16px;text-align:center">
+  <div style="display:flex;justify-content:center;gap:8px;align-items:center;max-width:500px;margin:0 auto">
+    <span style="color:#94A3B8;font-size:0.85rem">1. Panier</span>
+    <span style="color:#94A3B8">→</span>
+    <span style="color:var(--vert);font-weight:700;font-size:0.85rem">2. Livraison & Paiement</span>
+    <span style="color:#94A3B8">→</span>
+    <span style="color:#94A3B8;font-size:0.85rem">3. Confirmation</span>
+  </div>
+</div>
+
+<section class="section" style="padding-top:32px">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start">
+
+      <!-- FORMULAIRE -->
+      <div>
+        <h1 style="font-size:1.4rem;font-weight:800;margin-bottom:24px">📝 Informations de livraison</h1>
+
+        <!-- Message erreur -->
+        <div id="erreur-commande" style="display:none;background:#FEE2E2;border:1px solid var(--rouge);border-radius:var(--radius);padding:12px 16px;color:var(--rouge);font-weight:600;margin-bottom:20px"></div>
+
+        <form id="form-commande">
+
+          <!-- SECTION: Informations personnelles -->
+          <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:24px;margin-bottom:20px">
+            <h2 style="font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px">
+              👤 Vos informations
+            </h2>
+            <div class="form-group">
+              <label class="form-label" for="nom-client">Nom complet *</label>
+              <input type="text" id="nom-client" class="form-control" placeholder="Ex: Amadou Diallo" required>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div class="form-group">
+                <label class="form-label" for="tel-livraison">Téléphone * <span style="font-size:0.8rem;color:var(--gray)">(livraison)</span></label>
+                <input type="tel" id="tel-livraison" class="form-control" placeholder="+221 7X XXX XX XX" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="email-client">Email <span style="color:var(--gray)">(optionnel)</span></label>
+                <input type="email" id="email-client" class="form-control" placeholder="votre@email.com">
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: Adresse livraison -->
+          <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:24px;margin-bottom:20px">
+            <h2 style="font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px">
+              📍 Adresse de livraison
+            </h2>
+            <div class="form-group">
+              <label class="form-label" for="ville">Ville / Zone *</label>
+              <select id="ville" class="form-control" required>
+                <option value="">-- Choisissez votre ville --</option>
+                <optgroup label="Dakar Centre (1 500 FCFA)">
+                  <option value="dakar">Dakar</option>
+                  <option value="plateau">Plateau</option>
+                  <option value="medina">Médina</option>
+                  <option value="point_e">Point E</option>
+                  <option value="sacre_coeur">Sacré Cœur</option>
+                  <option value="mermoz">Mermoz</option>
+                  <option value="fann">Fann</option>
+                </optgroup>
+                <optgroup label="Dakar Périphérie (2 000-2 500 FCFA)">
+                  <option value="yoff">Yoff</option>
+                  <option value="ngor">Ngor</option>
+                  <option value="ouakam">Ouakam</option>
+                  <option value="almadies">Almadies</option>
+                  <option value="pikine">Pikine</option>
+                  <option value="guediawaye">Guédiawaye</option>
+                  <option value="thiaroye">Thiaroye</option>
+                </optgroup>
+                <optgroup label="Banlieue (3 000-4 000 FCFA)">
+                  <option value="rufisque">Rufisque</option>
+                  <option value="bargny">Bargny</option>
+                  <option value="sebikotane">Sébikotane</option>
+                </optgroup>
+                <optgroup label="Régions (5 000 FCFA et plus)">
+                  <option value="thies">Thiès</option>
+                  <option value="mbour">Mbour</option>
+                  <option value="saly">Saly</option>
+                  <option value="kaolack">Kaolack</option>
+                  <option value="touba">Touba</option>
+                  <option value="saint_louis">Saint-Louis</option>
+                  <option value="diourbel">Diourbel</option>
+                  <option value="louga">Louga</option>
+                  <option value="ziguinchor">Ziguinchor</option>
+                  <option value="tambacounda">Tambacounda</option>
+                  <option value="kolda">Kolda</option>
+                  <option value="kedougou">Kédougou</option>
+                </optgroup>
+              </select>
+              <span class="form-hint" id="info-livraison"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="adresse">Adresse complète *</label>
+              <input type="text" id="adresse" class="form-control" placeholder="Ex: Rue 15, Villa 23, Sacré Cœur 3" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="notes">Instructions spéciales <span style="color:var(--gray)">(optionnel)</span></label>
+              <textarea id="notes" class="form-control" rows="2" placeholder="Ex: Appeler avant de livrer, portail bleu..."></textarea>
+            </div>
+          </div>
+
+          <!-- SECTION: Paiement -->
+          <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:24px;margin-bottom:20px">
+            <h2 style="font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px">
+              💳 Mode de paiement
+            </h2>
+
+            <div class="option-cards" style="grid-template-columns:1fr 1fr">
+              <label class="option-card">
+                <input type="radio" name="payment_type" value="mobile">
+                <div class="option-icon">📱</div>
+                <div class="option-label">Mobile Money</div>
+                <div class="option-desc">Wave ou Orange Money</div>
+              </label>
+              <label class="option-card">
+                <input type="radio" name="payment_type" value="livraison" checked>
+                <div class="option-icon">🚗</div>
+                <div class="option-label">À la livraison</div>
+                <div class="option-desc">Espèces ou mobile</div>
+              </label>
+            </div>
+
+            <!-- Champs Mobile Money (masqués par défaut) -->
+            <div id="champs-mobile" style="display:none;margin-top:16px;padding:16px;background:var(--gray-light);border-radius:var(--radius)">
+              <p style="font-weight:700;margin-bottom:12px;font-size:0.9rem">Choisissez votre opérateur:</p>
+              <div class="option-cards" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+                <label class="option-card" style="padding:12px">
+                  <input type="radio" name="mobile_method" value="wave">
+                  <div style="font-size:1.5rem">🌊</div>
+                  <div class="option-label">Wave</div>
+                </label>
+                <label class="option-card" style="padding:12px">
+                  <input type="radio" name="mobile_method" value="orange">
+                  <div style="font-size:1.5rem">🟠</div>
+                  <div class="option-label">Orange Money</div>
+                </label>
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label" for="tel-mobile">Votre numéro Wave/Orange Money *</label>
+                <input type="tel" id="tel-mobile" class="form-control" placeholder="+221 7X XXX XX XX">
+                <span class="form-hint">Vous recevrez les instructions de paiement sur la page suivante</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOUTON COMMANDER -->
+          <button type="submit" id="btn-commander" class="btn btn-primary btn-full btn-lg">
+            ✅ Confirmer la commande — <span id="btn-total-montant">…</span>
+          </button>
+
+          <p style="text-align:center;font-size:0.8rem;color:var(--gray);margin-top:12px">
+            🔒 Vos informations sont en sécurité. Annulation gratuite avant expédition.
+          </p>
+        </form>
+      </div>
+
+      <!-- RÉCAPITULATIF (fixe) -->
+      <div class="order-summary" id="recap-items" style="position:sticky;top:100px"></div>
+
+    </div>
+  </div>
+</section>
+
+<div id="footer"></div>
+<script src="js/main.js"></script>
+<script src="js/commande.js"></script>
+</body>
+</html>

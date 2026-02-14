@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Panier - DAKARTECH</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="header"></div>
+
+<!-- HERO MINI -->
+<div style="background:linear-gradient(135deg,var(--dark),#0F3460);padding:32px 16px;text-align:center;color:#fff">
+  <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:8px">🛒 Mon Panier</h1>
+  <p style="color:#94A3B8">Vérifiez vos articles avant de commander</p>
+</div>
+
+<section class="section" style="padding-top:32px">
+  <div class="container">
+
+    <!-- PANIER VIDE -->
+    <div id="panier-vide" style="display:none;text-align:center;padding:80px 16px">
+      <div style="font-size:4rem;margin-bottom:16px">🛒</div>
+      <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:8px">Votre panier est vide</h2>
+      <p style="color:var(--gray);margin-bottom:24px">Découvrez nos produits et ajoutez-en à votre panier!</p>
+      <a href="produits.html" class="btn btn-primary btn-lg">🛍️ Voir les produits</a>
+    </div>
+
+    <!-- CONTENU PANIER -->
+    <div id="panier-content" style="display:none;grid-template-columns:1fr 360px;gap:24px;align-items:start">
+      <!-- Articles -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h2 style="font-size:1.1rem;font-weight:700">Articles dans votre panier</h2>
+          <button onclick="viderPanier()" class="btn btn-sm" style="color:var(--rouge);border-color:var(--rouge)">
+            🗑️ Vider le panier
+          </button>
+        </div>
+        <div id="panier-items"></div>
+      </div>
+
+      <!-- Récapitulatif -->
+      <div class="order-summary" id="panier-resume" style="position:sticky;top:100px"></div>
+    </div>
+
+  </div>
+</section>
+
+<div id="footer"></div>
+<script src="js/main.js"></script>
+<script src="js/panier.js"></script>
+</body>
+</html>

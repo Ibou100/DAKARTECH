@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAKARTECH - Votre boutique tech à Dakar 🇸🇳</title>
+  <meta name="description" content="Achetez smartphones, ordinateurs et accessoires tech à Dakar. Paiement Wave, Orange Money ou à la livraison.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- HEADER INJECTÉ PAR JS -->
+<div id="header"></div>
+
+<!-- ===== SECTION HÉRO ===== -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🇸🇳 100% Dakarois · Livraison rapide</div>
+    <h1>La tech de qualité,<br><span>au prix juste</span></h1>
+    <p class="hero-wolof">"Teknoloji bi nekk ci sa loxo" — La technologie dans vos mains</p>
+    <p>Smartphones, ordinateurs et accessoires tech livrés chez vous à Dakar et partout au Sénégal. Paiement Wave, Orange Money ou à la livraison.</p>
+    <div class="hero-actions">
+      <a href="produits.html" class="btn btn-primary btn-lg">
+        🛍️ Voir les produits
+      </a>
+      <a href="https://wa.me/221701234567" target="_blank" class="btn btn-whatsapp btn-lg">
+        💬 WhatsApp
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="number">500+</div>
+        <div class="label">Produits</div>
+      </div>
+      <div class="stat-item">
+        <div class="number">24h</div>
+        <div class="label">Livraison Dakar</div>
+      </div>
+      <div class="stat-item">
+        <div class="number">3</div>
+        <div class="label">Modes de paiement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CATÉGORIES ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Nos Catégories</h2>
+      <p>Trouvez exactement ce que vous cherchez</p>
+      <div class="vert-line"></div>
+    </div>
+    <div class="categories-grid">
+      <a href="produits.html?cat=telephones" class="category-card">
+        <div class="icon">📱</div>
+        <div class="name">Téléphones</div>
+        <div class="count">Samsung, iPhone, Tecno…</div>
+      </a>
+      <a href="produits.html?cat=ordinateurs" class="category-card">
+        <div class="icon">💻</div>
+        <div class="name">Ordinateurs</div>
+        <div class="count">HP, Dell, Lenovo, MacBook…</div>
+      </a>
+      <a href="produits.html?cat=accessoires" class="category-card">
+        <div class="icon">🎧</div>
+        <div class="name">Accessoires</div>
+        <div class="count">Écouteurs, chargeurs, souris…</div>
+      </a>
+      <a href="produits.html?cat=tablettes" class="category-card">
+        <div class="icon">📟</div>
+        <div class="name">Tablettes</div>
+        <div class="count">iPad, Samsung Tab…</div>
+      </a>
+      <a href="produits.html?cat=montres" class="category-card">
+        <div class="icon">⌚</div>
+        <div class="name">Montres</div>
+        <div class="count">Apple Watch, Samsung…</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUITS EN VEDETTE ===== -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-title">
+      <h2>⭐ Produits en Vedette</h2>
+      <p>Sélection des meilleurs articles du moment</p>
+      <div class="vert-line"></div>
+    </div>
+    <div class="products-grid" id="featured-products">
+      <!-- Chargé dynamiquement -->
+      <div class="loading-overlay" style="grid-column:1/-1">
+        <div class="loading-spinner"></div>
+        <p>Chargement des produits…</p>
+      </div>
+    </div>
+    <div class="text-center" style="margin-top:32px">
+      <a href="produits.html" class="btn btn-secondary btn-lg">
+        Voir tous les produits →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== COMMENT ÇA MARCHE ===== -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>💳 Modes de Paiement</h2>
+      <p>Simple, rapide et sécurisé</p>
+      <div class="vert-line"></div>
+    </div>
+    <div class="payment-methods">
+      <div class="payment-card wave">
+        <div class="payment-icon">🌊</div>
+        <h3>Paiement Wave</h3>
+        <p>Transférez directement depuis votre application Wave. Instructions affichées après la commande.</p>
+        <span class="payment-badge wave">Wave Money</span>
+      </div>
+      <div class="payment-card orange">
+        <div class="payment-icon">🟠</div>
+        <h3>Orange Money</h3>
+        <p>Payez via Orange Money en quelques étapes simples. Numéro marchand fourni après commande.</p>
+        <span class="payment-badge orange">Orange Money</span>
+      </div>
+      <div class="payment-card delivery">
+        <div class="payment-icon">🚗</div>
+        <h3>Paiement à la Livraison</h3>
+        <p>Payez en espèces ou via mobile money directement à la réception de votre colis.</p>
+        <span class="payment-badge delivery">Paiement à la livraison</span>
+      </div>
+    </div>
+
+    <!-- Étapes commande -->
+    <div style="margin-top:48px">
+      <div class="section-title">
+        <h2>🛒 Comment commander?</h2>
+        <p>En 4 étapes simples</p>
+        <div class="vert-line"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;max-width:800px;margin:0 auto">
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:2.5rem;margin-bottom:12px">🔍</div>
+          <div style="background:var(--vert);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px;font-size:0.9rem">1</div>
+          <h4 style="font-weight:700;margin-bottom:6px">Choisissez</h4>
+          <p style="color:var(--gray);font-size:0.9rem">Parcourez notre catalogue et ajoutez au panier</p>
+        </div>
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:2.5rem;margin-bottom:12px">📝</div>
+          <div style="background:var(--vert);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px;font-size:0.9rem">2</div>
+          <h4 style="font-weight:700;margin-bottom:6px">Commandez</h4>
+          <p style="color:var(--gray);font-size:0.9rem">Indiquez votre adresse et choisissez votre paiement</p>
+        </div>
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:2.5rem;margin-bottom:12px">💸</div>
+          <div style="background:var(--vert);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px;font-size:0.9rem">3</div>
+          <h4 style="font-weight:700;margin-bottom:6px">Payez</h4>
+          <p style="color:var(--gray);font-size:0.9rem">Wave, Orange Money ou à la livraison</p>
+        </div>
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:2.5rem;margin-bottom:12px">🚀</div>
+          <div style="background:var(--vert);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto 12px;font-size:0.9rem">4</div>
+          <h4 style="font-weight:700;margin-bottom:6px">Recevez</h4>
+          <p style="color:var(--gray);font-size:0.9rem">Livraison en 24-48h à Dakar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BANNIÈRE PROMO ===== -->
+<section style="background:linear-gradient(135deg,var(--vert),var(--vert-dark));color:#fff;padding:48px 16px;text-align:center">
+  <div class="container">
+    <h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px">🎁 Livraison gratuite dès 100 000 FCFA</h2>
+    <p style="font-size:1.05rem;opacity:0.9;margin-bottom:24px">Pour les commandes dans Dakar intra-muros</p>
+    <a href="produits.html" class="btn" style="background:#fff;color:var(--vert);font-size:1rem;padding:14px 32px">
+      Profiter de l'offre →
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER INJECTÉ PAR JS -->
+<div id="footer"></div>
+
+<script src="js/main.js"></script>
+<script>
+// Rendu du header et footer
+renderHeader('accueil');
+renderFooter();
+
+// Chargement des produits en vedette
+async function chargerProduitsVedette() {
+  const container = document.getElementById('featured-products');
+  try {
+    const data = await apiRequest('/products/featured');
+    if (!data.products || data.products.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:var(--gray);grid-column:1/-1">Aucun produit disponible pour le moment.</p>';
+      return;
+    }
+
+    container.innerHTML = data.products.map(p => `
+      <div class="product-card">
+        <div class="product-img-placeholder">
+          ${p.category === 'telephones' ? '📱' : p.category === 'ordinateurs' ? '💻' : p.category === 'tablettes' ? '📟' : '🎧'}
+        </div>
+        <div class="product-info">
+          <div class="product-category">${p.category}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${truncate(p.description, 80)}</div>
+          ${p.stock <= 5 && p.stock > 0 ? `<div class="product-stock-low">⚡ Plus que ${p.stock} en stock!</div>` : ''}
+          <div class="product-price">${formatPrix(p.price)}</div>
+          <div class="product-actions">
+            <button class="btn btn-primary btn-sm" style="flex:1" onclick='Panier.ajouter(${JSON.stringify(p)})'>
+              🛒 Ajouter
+            </button>
+            <a href="produits.html?id=${p.id}" class="btn btn-secondary btn-sm">Voir</a>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    // Afficher des produits de démo si l'API n'est pas disponible
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray)">
+        <p>🔌 Serveur non disponible - Démarrez le backend pour voir les produits</p>
+        <code style="background:var(--gray-light);padding:8px 16px;border-radius:8px;display:inline-block;margin-top:12px;font-size:0.85rem">
+          cd backend && python run.py
+        </code>
+      </div>`;
+  }
+}
+
+chargerProduitsVedette();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - DAKARTECH Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="admin-sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">💻 DAKARTECH</div>
+    <div class="sub">Panneau d'administration</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <a class="nav-item active" href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="nav-item" href="commandes.html"><span class="icon">📦</span> Commandes</a>
+    <a class="nav-item" href="produits-admin.html"><span class="icon">🛍️</span> Produits</a>
+    <div class="nav-section">Accès rapide</div>
+    <a class="nav-item" href="../frontend/index.html" target="_blank"><span class="icon">🌐</span> Voir le site</a>
+    <a class="nav-item" href="https://wa.me/221701234567" target="_blank"><span class="icon">💬</span> WhatsApp</a>
+  </nav>
+  <div class="sidebar-footer">
+    DAKARTECH Admin v1.0<br>
+    <span style="color:#22C55E">● Connecté</span>
+  </div>
+</aside>
+
+<!-- CONTENU PRINCIPAL -->
+<main class="admin-main">
+  <div class="admin-topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button onclick="document.getElementById('sidebar').classList.toggle('open')" class="btn btn-secondary btn-icon" style="display:none" id="menu-toggle">☰</button>
+      <h1 class="topbar-title">📊 Dashboard</h1>
+    </div>
+    <div class="topbar-right">
+      <span id="date-actuelle" style="font-size:0.85rem;color:var(--gray)"></span>
+      <a href="commandes.html" class="btn btn-primary btn-sm">📦 Voir commandes</a>
+    </div>
+  </div>
+
+  <div class="admin-content">
+
+    <!-- ALERTES COMMANDES EN ATTENTE -->
+    <div id="alertes"></div>
+
+    <!-- STATS DU JOUR -->
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--gray)">Aujourd'hui</h2>
+    <div class="stats-grid" id="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon vert">📦</div>
+        <div><div class="stat-value" id="stat-commandes-jour">—</div><div class="stat-label">Commandes aujourd'hui</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">💰</div>
+        <div><div class="stat-value" id="stat-revenus-jour" style="font-size:1.1rem">—</div><div class="stat-label">Revenus confirmés</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">⏳</div>
+        <div><div class="stat-value" id="stat-en-attente">—</div><div class="stat-label">En attente paiement</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon rouge">📱</div>
+        <div><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total commandes</div></div>
+      </div>
+    </div>
+
+    <!-- DERNIÈRES COMMANDES -->
+    <div class="table-card" style="margin-bottom:24px">
+      <div class="table-card-header">
+        <h3>📋 Dernières commandes</h3>
+        <a href="commandes.html" class="btn btn-secondary btn-sm">Voir tout →</a>
+      </div>
+      <div class="table-wrap">
+        <table id="table-commandes">
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Client</th>
+              <th>Montant</th>
+              <th>Paiement</th>
+              <th>Statut</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-commandes">
+            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray)">
+              <div class="loading loading-dark" style="margin:0 auto 8px"></div><br>Chargement…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GRAPHIQUE SIMPLE (ASCII) -->
+    <div class="table-card">
+      <div class="table-card-header">
+        <h3>📈 Méthodes de paiement</h3>
+      </div>
+      <div style="padding:20px" id="chart-paiement">
+        <div style="text-align:center;padding:20px;color:var(--gray)">Chargement des statistiques…</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+
+// Date actuelle
+document.getElementById('date-actuelle').textContent = new Date().toLocaleDateString('fr-FR', {
+  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+});
+
+// Statuts
+const STATUS_LABELS = {
+  en_attente: { label: 'En attente', class: 'badge-pending' },
+  paiement_confirme: { label: 'Paiement ✓', class: 'badge-confirmed' },
+  en_preparation: { label: 'Préparation', class: 'badge-processing' },
+  en_livraison: { label: 'En livraison', class: 'badge-shipping' },
+  livree: { label: 'Livrée ✓', class: 'badge-delivered' },
+  annulee: { label: 'Annulée', class: 'badge-cancelled' }
+};
+
+const PAYMENT_LABELS = {
+  wave: { label: 'Wave', class: 'badge-wave' },
+  orange: { label: 'Orange', class: 'badge-orange' },
+  livraison: { label: 'Livraison', class: 'badge-cash' }
+};
+
+function showToast(msg, type = 'success') {
+  const c = document.getElementById('toast-container');
+  const d = document.createElement('div');
+  d.className = `toast ${type}`;
+  d.innerHTML = `${type === 'success' ? '✅' : '❌'} ${msg}`;
+  c.appendChild(d);
+  setTimeout(() => d.remove(), 3000);
+}
+
+function formatPrix(v) {
+  return new Intl.NumberFormat('fr-FR').format(v || 0) + ' FCFA';
+}
+
+function formatDate(d) {
+  return new Date(d).toLocaleString('fr-FR', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+}
+
+// Chargement des données
+async function chargerDashboard() {
+  try {
+    const res = await fetch(`${API_BASE}/admin/orders?per_page=10`);
+    const data = await res.json();
+
+    // Stats
+    document.getElementById('stat-commandes-jour').textContent = data.stats.orders_today;
+    document.getElementById('stat-revenus-jour').textContent = data.stats.revenue_today_formatted;
+    document.getElementById('stat-total').textContent = data.total;
+
+    const enAttente = data.orders.filter(o => o.payment_status === 'pending').length;
+    document.getElementById('stat-en-attente').textContent = enAttente;
+
+    // Alerte si commandes en attente
+    if (enAttente > 0) {
+      document.getElementById('alertes').innerHTML = `
+        <div class="alert alert-warning" style="display:flex;align-items:center;justify-content:space-between">
+          <span>⚠️ ${enAttente} commande${enAttente > 1 ? 's' : ''} en attente de confirmation de paiement</span>
+          <a href="commandes.html?status=en_attente" class="btn btn-sm btn-secondary">Voir →</a>
+        </div>`;
+    }
+
+    // Tableau commandes
+    const tbody = document.getElementById('tbody-commandes');
+    if (data.orders.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray)">Aucune commande pour le moment</td></tr>';
+    } else {
+      tbody.innerHTML = data.orders.slice(0, 10).map(o => {
+        const st = STATUS_LABELS[o.status] || { label: o.status, class: 'badge-pending' };
+        const pm = o.mobile_method ? PAYMENT_LABELS[o.mobile_method] : PAYMENT_LABELS['livraison'];
+        return `
+          <tr>
+            <td><strong>#${o.id}</strong></td>
+            <td>${o.customer_name || o.user_id || '—'}<br><span style="font-size:0.78rem;color:var(--gray)">${o.delivery_city}</span></td>
+            <td><strong>${o.total_formatted}</strong></td>
+            <td><span class="badge ${pm?.class || ''}">${pm?.label || o.payment_type}</span></td>
+            <td><span class="badge ${st.class}">${st.label}</span></td>
+            <td style="font-size:0.82rem;color:var(--gray)">${formatDate(o.created_at)}</td>
+            <td>
+              <a href="commandes.html?id=${o.id}" class="btn btn-sm btn-secondary">Voir</a>
+              ${o.payment_status === 'pending' && o.payment_type === 'mobile'
+                ? `<button onclick="confirmerPaiement(${o.id})" class="btn btn-sm btn-primary" style="margin-left:4px">Confirmer</button>`
+                : ''}
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    // Graphique méthodes paiement
+    const wave = data.orders.filter(o => o.mobile_method === 'wave').length;
+    const orange = data.orders.filter(o => o.mobile_method === 'orange').length;
+    const livraison = data.orders.filter(o => o.payment_type === 'livraison').length;
+    const total = data.orders.length || 1;
+
+    document.getElementById('chart-paiement').innerHTML = `
+      <div style="display:grid;gap:12px;max-width:400px">
+        ${[
+          { label: '🌊 Wave', count: wave, color: '#00B4D8', total },
+          { label: '🟠 Orange Money', count: orange, color: '#FF6B00', total },
+          { label: '🚗 Paiement livraison', count: livraison, color: '#009A44', total }
+        ].map(item => `
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.85rem">
+              <span style="font-weight:600">${item.label}</span>
+              <span style="color:var(--gray)">${item.count} (${Math.round(item.count/total*100)}%)</span>
+            </div>
+            <div style="background:var(--gray-light);border-radius:50px;height:8px">
+              <div style="background:${item.color};width:${Math.round(item.count/total*100)}%;height:100%;border-radius:50px;transition:width 0.5s"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+
+  } catch (err) {
+    document.getElementById('tbody-commandes').innerHTML = `
+      <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray)">
+        ❌ Impossible de charger les données. Vérifiez que le backend est démarré.<br>
+        <code style="font-size:0.8rem;margin-top:8px;display:inline-block">cd backend && python run.py</code>
+      </td></tr>`;
+  }
+}
+
+async function confirmerPaiement(orderId) {
+  if (!confirm(`Confirmer le paiement de la commande #${orderId}?`)) return;
+  try {
+    const res = await fetch(`${API_BASE}/orders/${orderId}/confirm-payment`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (data.success) { showToast(`Paiement #${orderId} confirmé!`); chargerDashboard(); }
+    else showToast(data.error, 'error');
+  } catch { showToast('Erreur de connexion', 'error'); }
+}
+
+chargerDashboard();
+</script>
+</body>
+</html>
