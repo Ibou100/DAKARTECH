@@ -2,7 +2,7 @@
 // JavaScript global DAKARTECH - Utilitaires et gestion du panier
 
 // === CONFIGURATION ===
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = 'https://dakartech-backend.onrender.com';
 
 // === UTILITAIRES ===
 
