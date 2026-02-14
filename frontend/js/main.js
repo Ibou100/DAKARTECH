@@ -3,7 +3,6 @@
 
 // === CONFIGURATION ===
 const API_BASE = 'https://dakartech-backend.onrender.com/api';
-
 // === UTILITAIRES ===
 
 /**
