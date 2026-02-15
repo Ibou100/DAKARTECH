@@ -28,9 +28,7 @@ def create_app():
     app.config['JSON_SORT_KEYS'] = False
 
     # Configuration CORS (autorise le frontend à communiquer avec l'API)
-    CORS(app, origins=['http://localhost:3000', 'http://127.0.0.1:3000',
-                   'http://localhost:5500', 'http://127.0.0.1:5500',
-                   'http://localhost:8080', 'file://'])
+    CORS(app)
 
     # --- Initialisation extensions ---
     db.init_app(app)
