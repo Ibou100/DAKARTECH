@@ -20,10 +20,15 @@ def create_app():
 
     # --- Configuration ---
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-changez-en-prod')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    database_url = os.getenv(
         'DATABASE_URL',
-        'postgresql://postgres:motdepasse@localhost:5432/dakartech'
+        'sqlite:///dakartech.db'
     )
+    # Render et Heroku fournissent parfois 'postgres://' au lieu de 'postgresql://'
+    if database_url and database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JSON_SORT_KEYS'] = False
 

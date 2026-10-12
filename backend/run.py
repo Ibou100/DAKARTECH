@@ -140,14 +140,21 @@ def seed_database():
         print("   Admin: admin@dakartech.sn / admin2024")
 
 
-if __name__ == '__main__':
-    with app.app_context():
-        # Création des tables si elles n'existent pas
-        db.create_all()
-        print("✅ Tables de base de données créées/vérifiées.")
+def init_db():
+    """Initialise les tables et les données si la base de données est accessible"""
+    try:
+        with app.app_context():
+            db.create_all()
+            print("✅ Tables de base de données créées/vérifiées.")
+            seed_database()
+    except Exception as e:
+        print(f"⚠️ Avertissement lors de l'accès à la base de données: {e}")
+        print("   Vérifiez que DATABASE_URL est correcte et que le serveur PostgreSQL est en ligne.")
 
-        # Insertion des données de démonstration
-        seed_database()
+# Initialisation au chargement de l'application (fonctionne avec gunicorn et python direct)
+init_db()
+
+if __name__ == '__main__':
 
     port = int(os.getenv('PORT', 5000))
     host = os.getenv('HOST', '0.0.0.0')
